@@ -27,20 +27,20 @@ jobs:
         ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
     - name: Build image
-      run: docker build -t dog-backend .
+      run: docker build -t dogecr .
 
     - name: Tag image
       run: |
-        docker tag dog-backend:latest \
-        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-backend:latest
+        docker tag dogecr:latest \
+        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
 
-        docker tag dog-backend:latest \
-        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-backend:${{ github.sha }}
+        docker tag dog-ecr:latest \
+        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:${{ github.sha }}
 
     - name: Push image
       run: |
-        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-backend:latest
-        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-backend:${{ github.sha }}
+        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
+        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:${{ github.sha }}
 
     - name: Deploy on EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -53,10 +53,10 @@ jobs:
           | docker login --username AWS --password-stdin \
           ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-          docker pull ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-backend:latest
+          docker pull ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
 
-          docker stop dog-backend || true
-          docker rm dog-backend || true
+          docker stop dogecr || true
+          docker rm dogecr || true
 
-          docker run -d --name dog-backend -p 8000:5000 \
-            ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-backend:latest
+          docker run -d --name dogecr -p 8000:5000 \
+            ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
