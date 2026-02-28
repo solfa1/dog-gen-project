@@ -27,20 +27,20 @@ jobs:
         ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
     - name: Build image
-      run: docker build -t dogecr .
+      run: docker build -t dog-generator .
 
     - name: Tag image
       run: |
-        docker tag dogecr:latest \
-        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
+        docker tag dog-generator:latest \
+        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-generator:latest
 
         docker tag dog-ecr:latest \
-        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:${{ github.sha }}
+        ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-generator:${{ github.sha }}
 
     - name: Push image
       run: |
-        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
-        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:${{ github.sha }}
+        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-generator:latest
+        docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-generator:${{ github.sha }}
 
     - name: Deploy on EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -53,10 +53,10 @@ jobs:
           | docker login --username AWS --password-stdin \
           ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-          docker pull ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
+          docker pull ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-generator:latest
 
-          docker stop dogecr || true
-          docker rm dogecr || true
+          docker stop dog-generator || true
+          docker rm dog-generator || true
 
-          docker run -d --name dogecr -p 8000:5000 \
-            ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
+          docker run -d --name dog-generator -p 8000:5000 \
+            ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dog-generator:latest
