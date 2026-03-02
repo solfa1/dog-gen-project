@@ -42,7 +42,7 @@ jobs:
         docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
         docker push ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:${{ github.sha }}
 
-    - name: Deploy on EC2
+    - name: Deploy on EC2 with Docker Compose
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -53,10 +53,8 @@ jobs:
           | docker login --username AWS --password-stdin \
           ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-          docker pull ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
+          cd ~/your-project-folder   # <-- CHANGE THIS to your actual folder
 
-          docker stop dog-generator || true
-          docker rm dog-generator || true
-
-          docker run -d --name dog-generator -p 8000:5000 \
-            ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/dogecr:latest
+          docker compose pull
+          docker compose down
+          docker compose up -d
