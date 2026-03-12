@@ -53,9 +53,7 @@ jobs:
           | docker login --username AWS --password-stdin \
           ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-          cd ~/dog-app
-
-          export IMAGE_TAG=${{ github.sha }}
+          cd ~/your-project-folder   # <-- CHANGE THIS to your actual folder
 
           docker compose pull
           docker compose down
