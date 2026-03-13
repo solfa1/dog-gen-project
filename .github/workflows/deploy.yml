@@ -53,7 +53,7 @@ jobs:
           | docker login --username AWS --password-stdin \
           ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-          cd ~/your-project-folder   # <-- CHANGE THIS to your actual folder
+          cd ~/dog-app   
 
           docker compose pull
           docker compose down
